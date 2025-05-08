@@ -5,6 +5,7 @@ const winners = winnersJSON ? JSON.parse(winnersJSON) : [];
 
 document.querySelector("#app").innerHTML = `
   <div>
+    <ul id="history"></ul>
     <form>
       <input type="number" name="candidate" />
       <input type="button" value="1" />
@@ -20,26 +21,30 @@ document.querySelector("#app").innerHTML = `
       <input type="button" value="0" />
       <input type="submit" value=">" />
     </form>
-    <div id="status"></div>
-    
   </div>
 `;
 
+const history = [];
+
 const form = document.querySelector("form");
 const undo = document.querySelector("#undo");
-const status = document.querySelector("#status");
+const $history = document.querySelector("#history");
 
 form.addEventListener("submit", (ev) => {
   ev.preventDefault();
   const candidate = form.elements.candidate.value;
   if (winners.includes(candidate)) {
-    status.innerHTML = "already won";
+    history.push({ type: "invalid", candidate });
   } else {
     winners.push(candidate);
-    status.innerHTML = "new winner";
     window.localStorage.setItem("winners", JSON.stringify(winners));
+    history.push({ type: "valid", candidate });
   }
   form.elements.candidate.value = "";
+  $history.innerHTML = history
+    .slice(-5)
+    .map((x) => `<li class="${x.type}">${x.candidate}</li>`)
+    .join("");
 });
 
 undo.addEventListener("click", (ev) => {
