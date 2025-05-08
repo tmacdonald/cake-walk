@@ -30,10 +30,21 @@ const form = document.querySelector("form");
 const undo = document.querySelector("#undo");
 const $history = document.querySelector("#history");
 
+function renderHistory() {
+  $history.innerHTML = history
+    .slice(-5)
+    .map((x) => `<li class="${x.type}">${x.candidate}</li>`)
+    .join("");
+}
+
 form.addEventListener("submit", (ev) => {
   ev.preventDefault();
   const candidate = form.elements.candidate.value;
-  if (winners.includes(candidate)) {
+  if (candidate === "99999") {
+    history.splice(0, history.length);
+    winners.splice(0, winners.length);
+    window.localStorage.setItem("winners", JSON.stringify(winners));
+  } else if (winners.includes(candidate)) {
     history.push({ type: "invalid", candidate });
   } else {
     winners.push(candidate);
@@ -41,10 +52,7 @@ form.addEventListener("submit", (ev) => {
     history.push({ type: "valid", candidate });
   }
   form.elements.candidate.value = "";
-  $history.innerHTML = history
-    .slice(-5)
-    .map((x) => `<li class="${x.type}">${x.candidate}</li>`)
-    .join("");
+  renderHistory();
 });
 
 undo.addEventListener("click", (ev) => {
@@ -54,6 +62,8 @@ undo.addEventListener("click", (ev) => {
   } else {
     winners.splice(winners.length - 1);
     window.localStorage.setItem("winners", JSON.stringify(winners));
+    history.pop();
+    renderHistory();
   }
 });
 
