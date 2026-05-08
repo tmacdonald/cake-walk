@@ -73,5 +73,6 @@ numberButtons.forEach((button) => {
     const number = ev.target.value;
     const candidate = form.elements.candidate.value;
     form.elements.candidate.value = candidate + number;
+    navigator.vibrate(50);
   });
 });
