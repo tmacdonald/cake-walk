@@ -19,6 +19,10 @@
   --spacing-xs: 8px;
 }
 
+html {
+  touch-action: manipulation;
+}
+
 body {
   margin: 0;
   display: flex;
